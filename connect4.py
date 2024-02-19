@@ -196,7 +196,7 @@ class ConnectFourGUI:
             self.drop_piece_ai(col)
 
     def get_ai_move(self):
-        # Check if AI can win in the next move
+        # Check if AI can win in the next move (horizontal)
         for col in range(7):
             for row in range(5, -1, -1):
                 if self.board[row][col] == " ":
@@ -206,7 +206,7 @@ class ConnectFourGUI:
                         return col
                     self.board[row][col] = " "
 
-        # Check if player can win in the next move and block them
+        # Check if player can win in the next move (horizontal) and block them
         for col in range(7):
             for row in range(5, -1, -1):
                 if self.board[row][col] == " ":
@@ -216,11 +216,61 @@ class ConnectFourGUI:
                         return col
                     self.board[row][col] = " "
 
-        # Prefer playing in columns closer to the center
-        center_columns = [3, 2, 4, 1, 5, 0, 6]
-        for col in center_columns:
-            if self.board[0][col] == " ":
-                return col
+        # Check for potential winning moves for AI in the next two moves (horizontal)
+        for col in range(7):
+            for row in range(5, -1, -1):
+                if self.board[row][col] == " ":
+                    self.board[row][col] = "yellow"
+                    for c in range(7):
+                        for r in range(5, -1, -1):
+                            if self.board[r][c] == " ":
+                                self.board[r][c] = "yellow"
+                                if self.check_winner(r, c):
+                                    self.board[row][col] = " "
+                                    self.board[r][c] = " "
+                                    return col
+                                self.board[r][c] = " "
+                    self.board[row][col] = " "
+
+        # Check if AI can win in the next move (diagonal - positive slope)
+        for col in range(7):
+            for row in range(5, -1, -1):
+                if self.board[row][col] == " ":
+                    if (
+                        0 <= col <= 3
+                        and 0 <= row <= 2
+                        and self.board[row + 1][col + 1]
+                        == self.board[row + 2][col + 2]
+                        == self.board[row + 3][col + 3]
+                        == "yellow"
+                    ):
+                        self.board[row][col] = "yellow"
+                        if self.check_winner(row, col):
+                            self.board[row][col] = " "
+                            return col
+                        self.board[row][col] = " "
+
+        # Check if AI can win in the next move (diagonal - negative slope)
+        for col in range(7):
+            for row in range(5, -1, -1):
+                if self.board[row][col] == " ":
+                    if (
+                        0 <= col <= 3
+                        and 3 <= row <= 5
+                        and self.board[row - 1][col + 1]
+                        == self.board[row - 2][col + 2]
+                        == self.board[row - 3][col + 3]
+                        == "yellow"
+                    ):
+                        self.board[row][col] = "yellow"
+                        if self.check_winner(row, col):
+                            self.board[row][col] = " "
+                            return col
+                        self.board[row][col] = " "
+
+        # Play in the center if available
+        if self.board[0][3] == " ":
+            return 3
 
         # If no immediate winning move or blocking move, play randomly
         return random.randint(0, 6)
