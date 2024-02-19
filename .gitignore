@@ -1,0 +1,51 @@
+# Python-related
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyz
+*.pyzw
+*.pywz
+
+# Virtual environment
+venv/
+env/
+
+# IDE or editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.komodoproject
+.komodotools/
+.kate-swp/
+
+# Compiled files
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+*.pdb
+
+# OS or system-generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+
+# Added by Ankur for Pyinstaller
+
+# dist/
+build
+
+# extra
+
+connect4.spec
