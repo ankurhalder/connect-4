@@ -216,9 +216,9 @@ class ConnectFourGUI:
                         return col
                     self.board[row][col] = " "
 
-        # Prioritize center and edges
-        preferred_columns = [3, 2, 4, 1, 5, 0, 6]
-        for col in preferred_columns:
+        # Prefer playing in columns closer to the center
+        center_columns = [3, 2, 4, 1, 5, 0, 6]
+        for col in center_columns:
             if self.board[0][col] == " ":
                 return col
 
