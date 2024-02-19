@@ -198,110 +198,27 @@ class ConnectFourGUI:
             self.drop_piece_ai(col)
 
     def get_ai_move(self):
-        # Check for immediate winning moves
-        for col in range(7):
-            if self.is_valid_move(col):
-                row = self.get_next_open_row(col)
-                if self.is_winning_move(row, col, self.current_player):
-                    return col
+        # Implement AI logic here
+        return random.randint(0, 6)
 
-        # Check for immediate blocking moves
-        for col in range(7):
-            if self.is_valid_move(col):
-                row = self.get_next_open_row(col)
-                if self.is_winning_move(row, col, "red"):
-                    return col
-
-        # Check for moves that create multiple threats
-        for col in range(7):
-            if self.is_valid_move(col):
-                row = self.get_next_open_row(col)
-                self.board[row][col] = "yellow"
-                if self.is_multiple_threats("yellow"):
-                    self.board[row][col] = " "
-                    return col
-                self.board[row][col] = " "
-
-        # Check for moves that block opponent's multiple threats
-        for col in range(7):
-            if self.is_valid_move(col):
-                row = self.get_next_open_row(col)
-                self.board[row][col] = "red"
-                if self.is_multiple_threats("red"):
-                    self.board[row][col] = " "
-                    return col
-                self.board[row][col] = " "
-
-        # Choose a random valid move if no winning or blocking moves are available
-        valid_moves = [col for col in range(7) if self.is_valid_move(col)]
-        return random.choice(valid_moves)
-
-    def is_valid_move(self, col):
-        return self.board[0][col] == " "
-
-    def get_next_open_row(self, col):
+    def drop_piece_ai(self, col):
         for row in range(5, -1, -1):
             if self.board[row][col] == " ":
-                return row
-
-    def is_winning_move(self, row, col, player):
-        # Check horizontally
-        if col <= 3:
-            if (
-                self.board[row][col] == player
-                and self.board[row][col + 1] == player
-                and self.board[row][col + 2] == player
-                and self.board[row][col + 3] == player
-            ):
-                return True
-        # Check vertically
-        if row <= 2:
-            if (
-                self.board[row][col] == player
-                and self.board[row + 1][col] == player
-                and self.board[row + 2][col] == player
-                and self.board[row + 3][col] == player
-            ):
-                return True
-        # Check diagonally (positive slope)
-        if row <= 2 and col <= 3:
-            if (
-                self.board[row][col] == player
-                and self.board[row + 1][col + 1] == player
-                and self.board[row + 2][col + 2] == player
-                and self.board[row + 3][col + 3] == player
-            ):
-                return True
-        # Check diagonally (negative slope)
-        if row >= 3 and col <= 3:
-            if (
-                self.board[row][col] == player
-                and self.board[row - 1][col + 1] == player
-                and self.board[row - 2][col + 2] == player
-                and self.board[row - 3][col + 3] == player
-            ):
-                return True
-        return False
-
-    def is_multiple_threats(self, player):
-        for row in range(6):
-            for col in range(7):
-                if self.board[row][col] == " ":
-                    self.board[row][col] = player
-                    if self.count_threats(player) >= 2:
-                        self.board[row][col] = " "
-                        return True
-                    self.board[row][col] = " "
-        return False
-
-    def count_threats(self, player):
-        count = 0
-        for row in range(6):
-            for col in range(7):
-                if self.board[row][col] == " ":
-                    if self.is_winning_move(row, col, player):
-                        count += 1
-        return count
+                x, y = col * 100 + 50, row * 100 + 50
+                self.canvas.create_oval(
+                    x - 45, y - 45, x + 45, y + 45, fill=self.current_player
+                )
+                self.board[row][col] = self.current_player
+                if self.check_winner(row, col):
+                    self.end_game(f"Player {self.current_player.capitalize()} Wins!")
+                elif self.is_board_full():
+                    self.end_game("It's a Draw!")
+                else:
+                    self.current_player = "red"
+                    self.message_var.set(
+                        f"Player {self.current_player.capitalize()}'s Turn"
+                    )
+                break
 
 
 class ClosingPage:
