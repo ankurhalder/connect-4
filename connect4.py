@@ -1,4 +1,5 @@
 import tkinter as tk
+import random
 
 
 class ConnectFourGUI:
@@ -69,7 +70,35 @@ class ConnectFourGUI:
                     self.message_var.set(
                         f"Player {self.current_player.capitalize()}'s Turn"
                     )
+                    if self.current_player == "yellow":
+                        self.master.after(1000, self.computer_move)
                 break
+
+    def computer_move(self):
+        while True:
+            col = random.randint(0, 6)
+            if " " in self.board[0][col]:
+                for row in range(5, -1, -1):
+                    if self.board[row][col] == " ":
+                        x, y = col * 100 + 50, row * 100 + 50
+                        self.canvas.create_oval(
+                            x - 45, y - 45, x + 45, y + 45, fill=self.current_player
+                        )
+                        self.board[row][col] = self.current_player
+                        if self.check_winner(row, col):
+                            self.end_game(
+                                f"Player {self.current_player.capitalize()} Wins!"
+                            )
+                        elif self.is_board_full():
+                            self.end_game("It's a Draw!")
+                        else:
+                            self.current_player = (
+                                "yellow" if self.current_player == "red" else "red"
+                            )
+                            self.message_var.set(
+                                f"Player {self.current_player.capitalize()}'s Turn"
+                            )
+                        return
 
     def check_winner(self, row, col):
         # Check horizontally
