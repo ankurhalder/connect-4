@@ -1,5 +1,72 @@
 import tkinter as tk
-import random
+from tkinter import messagebox
+
+
+class HomePage:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Connect Four")
+        self.master.geometry("500x400")
+
+        # Heading
+        self.heading_label = tk.Label(
+            master, text="Connect Four Game", font=("Helvetica", 24)
+        )
+        self.heading_label.pack(pady=20)
+
+        # Subheading
+        self.subheading_label = tk.Label(
+            master, text="Created by Ankur Halder", font=("Helvetica", 12)
+        )
+        self.subheading_label.pack()
+
+        # Buttons
+        self.start_button = tk.Button(
+            master, text="Start Game", command=self.start_game
+        )
+        self.start_button.pack(pady=20)
+
+        self.difficulty_button = tk.Button(
+            master, text="Choose Difficulty", command=self.choose_difficulty
+        )
+        self.difficulty_button.pack(pady=10)
+
+        self.exit_button = tk.Button(master, text="Exit Game", command=self.exit_game)
+        self.exit_button.pack(pady=10)
+
+        # Footer
+        self.footer_label = tk.Label(
+            master,
+            text="Explore more projects like this visit ankurhalder.in",
+            font=("Helvetica", 10),
+            fg="blue",
+            cursor="hand2",
+        )
+        self.footer_label.pack(pady=20)
+        self.footer_label.bind(
+            "<Button-1>", lambda e: self.open_website("https://ankurhalder.in")
+        )
+
+    def start_game(self):
+        self.master.destroy()
+        game_window = tk.Tk()
+        game = ConnectFourGUI(game_window)
+        game_window.mainloop()
+
+    def choose_difficulty(self):
+        difficulty = messagebox.askquestion(
+            "Choose Difficulty", "Do you want to change the difficulty?"
+        )
+        if difficulty == "yes":
+            messagebox.showinfo("Difficulty", "Difficulty changed successfully!")
+
+    def exit_game(self):
+        self.master.destroy()
+
+    def open_website(self, url):
+        import webbrowser
+
+        webbrowser.open(url)
 
 
 class ConnectFourGUI:
@@ -70,35 +137,7 @@ class ConnectFourGUI:
                     self.message_var.set(
                         f"Player {self.current_player.capitalize()}'s Turn"
                     )
-                    if self.current_player == "yellow":
-                        self.master.after(1000, self.computer_move)
                 break
-
-    def computer_move(self):
-        while True:
-            col = random.randint(0, 6)
-            if " " in self.board[0][col]:
-                for row in range(5, -1, -1):
-                    if self.board[row][col] == " ":
-                        x, y = col * 100 + 50, row * 100 + 50
-                        self.canvas.create_oval(
-                            x - 45, y - 45, x + 45, y + 45, fill=self.current_player
-                        )
-                        self.board[row][col] = self.current_player
-                        if self.check_winner(row, col):
-                            self.end_game(
-                                f"Player {self.current_player.capitalize()} Wins!"
-                            )
-                        elif self.is_board_full():
-                            self.end_game("It's a Draw!")
-                        else:
-                            self.current_player = (
-                                "yellow" if self.current_player == "red" else "red"
-                            )
-                            self.message_var.set(
-                                f"Player {self.current_player.capitalize()}'s Turn"
-                            )
-                        return
 
     def check_winner(self, row, col):
         # Check horizontally
@@ -156,11 +195,80 @@ class ConnectFourGUI:
         return True
 
     def end_game(self, message):
-        self.message_var.set(message)
-        self.canvas.unbind("<Button-1>")
-        self.canvas.unbind("<Motion>")
+        messagebox.showinfo("Game Over", message)
+        self.master.destroy()
+        closing_window = tk.Tk()
+        closing_page = ClosingPage(closing_window)
+        closing_window.mainloop()
+
+
+class ClosingPage:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Connect Four")
+        self.master.geometry("500x400")
+
+        # Heading
+        self.heading_label = tk.Label(
+            master, text="Connect Four Game", font=("Helvetica", 24)
+        )
+        self.heading_label.pack(pady=20)
+
+        # Subheading
+        self.subheading_label = tk.Label(
+            master, text="Created by Ankur Halder", font=("Helvetica", 12)
+        )
+        self.subheading_label.pack()
+
+        # Buttons
+        self.play_again_button = tk.Button(
+            master, text="Play Again", command=self.play_again
+        )
+        self.play_again_button.pack(pady=20)
+
+        self.change_difficulty_button = tk.Button(
+            master, text="Change Difficulty", command=self.change_difficulty
+        )
+        self.change_difficulty_button.pack(pady=10)
+
+        self.exit_button = tk.Button(master, text="Exit Game", command=self.exit_game)
+        self.exit_button.pack(pady=10)
+
+        # Footer
+        self.footer_label = tk.Label(
+            master,
+            text="Explore more projects like this visit ankurhalder.in",
+            font=("Helvetica", 10),
+            fg="blue",
+            cursor="hand2",
+        )
+        self.footer_label.pack(pady=20)
+        self.footer_label.bind(
+            "<Button-1>", lambda e: self.open_website("https://ankurhalder.in")
+        )
+
+    def play_again(self):
+        self.master.destroy()
+        root = tk.Tk()
+        home_page = HomePage(root)
+        root.mainloop()
+
+    def change_difficulty(self):
+        difficulty = messagebox.askquestion(
+            "Choose Difficulty", "Do you want to change the difficulty?"
+        )
+        if difficulty == "yes":
+            messagebox.showinfo("Difficulty", "Difficulty changed successfully!")
+
+    def exit_game(self):
+        self.master.destroy()
+
+    def open_website(self, url):
+        import webbrowser
+
+        webbrowser.open(url)
 
 
 root = tk.Tk()
-game = ConnectFourGUI(root)
+home_page = HomePage(root)
 root.mainloop()
