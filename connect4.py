@@ -200,8 +200,11 @@ class ConnectFourGUI:
         for col in range(7):
             for row in range(5, -1, -1):
                 if self.board[row][col] == " ":
+                    self.board[row][col] = "yellow"
                     if self.check_winner(row, col):
+                        self.board[row][col] = " "
                         return col
+                    self.board[row][col] = " "
 
         # Check if player can win in the next move and block them
         for col in range(7):
@@ -213,7 +216,13 @@ class ConnectFourGUI:
                         return col
                     self.board[row][col] = " "
 
-        # If no immediate winning move, play randomly
+        # Prioritize center and edges
+        preferred_columns = [3, 2, 4, 1, 5, 0, 6]
+        for col in preferred_columns:
+            if self.board[0][col] == " ":
+                return col
+
+        # If no immediate winning move or blocking move, play randomly
         return random.randint(0, 6)
 
     def drop_piece_ai(self, col):
