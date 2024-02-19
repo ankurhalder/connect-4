@@ -8,31 +8,45 @@ class HomePage:
         self.master = master
         self.master.title("Connect Four")
         self.master.geometry("500x400")
+        self.master.configure(bg="#f0f0f0")  # Set background color
 
         self.heading_label = tk.Label(
-            master, text="Connect Four Game", font=("Helvetica", 24)
+            master, text="Connect Four Game", font=("Helvetica", 24), bg="#f0f0f0"
         )
         self.heading_label.pack(pady=20)
 
         self.subheading_label = tk.Label(
-            master, text="Created by Ankur Halder", font=("Helvetica", 12)
+            master, text="Created by Ankur Halder", font=("Helvetica", 12), bg="#f0f0f0"
         )
         self.subheading_label.pack()
 
         self.start_button = tk.Button(
-            master, text="Start Game", command=self.start_game
+            master,
+            text="Start Game",
+            command=self.start_game,
+            bg="#4CAF50",
+            fg="white",
+            font=("Helvetica", 14),
         )
         self.start_button.pack(pady=20)
 
-        self.exit_button = tk.Button(master, text="Exit Game", command=self.exit_game)
+        self.exit_button = tk.Button(
+            master,
+            text="Exit Game",
+            command=self.exit_game,
+            bg="#F44336",
+            fg="white",
+            font=("Helvetica", 14),
+        )
         self.exit_button.pack(pady=10)
 
         self.footer_label = tk.Label(
             master,
             text="Explore more projects like this visit ankurhalder.in",
             font=("Helvetica", 10),
-            fg="blue",
+            fg="#1565c0",
             cursor="hand2",
+            bg="#f0f0f0",
         )
         self.footer_label.pack(pady=20)
         self.footer_label.bind(
@@ -59,7 +73,9 @@ class ConnectFourGUI:
         self.master = master
         self.master.title("Connect Four")
 
-        self.canvas = tk.Canvas(master, width=700, height=600, bg="blue")
+        self.canvas = tk.Canvas(
+            master, width=700, height=600, bg="#2196F3"
+        )  # Set canvas background color
         self.canvas.pack()
 
         self.board = [[" " for _ in range(7)] for _ in range(6)]
@@ -71,7 +87,7 @@ class ConnectFourGUI:
             master,
             textvariable=self.message_var,
             font=("Helvetica", 18),
-            bg="blue",
+            bg="#2196F3",
             fg="white",
         )
         self.message_label.pack(pady=10)
@@ -87,7 +103,7 @@ class ConnectFourGUI:
                 x1, y1 = col * 100, row * 100
                 x2, y2 = x1 + 100, y1 + 100
                 rect_id = self.canvas.create_rectangle(
-                    x1, y1, x2, y2, fill="yellow", outline="black", width=2
+                    x1, y1, x2, y2, fill="#FFEB3B", outline="#FFC107", width=2
                 )
                 row_rects.append(rect_id)
             self.rectangles.append(row_rects)
@@ -305,12 +321,24 @@ class ClosingPage:
         self.subheading_label.pack()
 
         self.play_again_button = tk.Button(
-            master, text="Play Again", command=self.play_again
+            master,
+            text="Play Again",
+            command=self.play_again,
+            bg="#4CAF50",
+            fg="white",
+            font=("Helvetica", 14),
         )
         self.play_again_button.pack(pady=20)
 
-        self.exit_button = tk.Button(master, text="Exit Game", command=self.exit_game)
-        self.exit_button.pack(pady=10)
+        self.exit_button = tk.Button(
+            master,
+            text="Exit Game",
+            command=self.exit_game,
+            bg="#F44336",
+            fg="white",
+            font=("Helvetica", 14),
+        )
+        self.exit_button.pack(pady=20)
 
         self.footer_label = tk.Label(
             master,
