@@ -196,7 +196,24 @@ class ConnectFourGUI:
             self.drop_piece_ai(col)
 
     def get_ai_move(self):
-        # Implement AI logic here
+        # Check if AI can win in the next move
+        for col in range(7):
+            for row in range(5, -1, -1):
+                if self.board[row][col] == " ":
+                    if self.check_winner(row, col):
+                        return col
+
+        # Check if player can win in the next move and block them
+        for col in range(7):
+            for row in range(5, -1, -1):
+                if self.board[row][col] == " ":
+                    self.board[row][col] = "red"
+                    if self.check_winner(row, col):
+                        self.board[row][col] = " "
+                        return col
+                    self.board[row][col] = " "
+
+        # If no immediate winning move, play randomly
         return random.randint(0, 6)
 
     def drop_piece_ai(self, col):
