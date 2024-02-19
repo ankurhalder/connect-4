@@ -123,9 +123,7 @@ class ConnectFourGUI:
                     self.current_player = (
                         "yellow" if self.current_player == "red" else "red"
                     )
-                    self.message_var.set(
-                        f"Player {self.current_player.capitalize()}'s Turn"
-                    )
+                    self.update_message()
                     if self.current_player == "yellow":
                         self.ai_move()
                 break
@@ -215,10 +213,16 @@ class ConnectFourGUI:
                     self.end_game("It's a Draw!")
                 else:
                     self.current_player = "red"
-                    self.message_var.set(
-                        f"Player {self.current_player.capitalize()}'s Turn"
-                    )
+                    self.update_message()
                 break
+
+    def update_message(self):
+        player = "Red" if self.current_player == "red" else "Yellow"
+        self.message_var.set(f"Player {player}'s Turn")
+        if self.current_player == "red":
+            self.message_label.config(fg="red")
+        else:
+            self.message_label.config(fg="yellow")
 
 
 class ClosingPage:
