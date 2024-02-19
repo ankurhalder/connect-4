@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+import random
 
 
 class HomePage:
@@ -26,10 +27,25 @@ class HomePage:
         )
         self.start_button.pack(pady=20)
 
-        self.difficulty_button = tk.Button(
-            master, text="Choose Difficulty", command=self.choose_difficulty
+        self.difficulty_label = tk.Label(
+            master, text="Difficulty: Medium", font=("Helvetica", 12)
         )
-        self.difficulty_button.pack(pady=10)
+        self.difficulty_label.pack()
+
+        self.easy_button = tk.Button(
+            master, text="Easy", command=lambda: self.set_difficulty("Easy")
+        )
+        self.easy_button.pack(pady=5)
+
+        self.medium_button = tk.Button(
+            master, text="Medium", command=lambda: self.set_difficulty("Medium")
+        )
+        self.medium_button.pack(pady=5)
+
+        self.hard_button = tk.Button(
+            master, text="Hard", command=lambda: self.set_difficulty("Hard")
+        )
+        self.hard_button.pack(pady=5)
 
         self.exit_button = tk.Button(master, text="Exit Game", command=self.exit_game)
         self.exit_button.pack(pady=10)
@@ -53,12 +69,14 @@ class HomePage:
         game = ConnectFourGUI(game_window)
         game_window.mainloop()
 
-    def choose_difficulty(self):
-        difficulty = messagebox.askquestion(
-            "Choose Difficulty", "Do you want to change the difficulty?"
-        )
-        if difficulty == "yes":
-            messagebox.showinfo("Difficulty", "Difficulty changed successfully!")
+    def set_difficulty(self, difficulty):
+        self.difficulty_label.config(text=f"Difficulty: {difficulty}")
+        if difficulty == "Easy":
+            ConnectFourGUI.ai_logic = ConnectFourGUI.easy_ai_logic
+        elif difficulty == "Medium":
+            ConnectFourGUI.ai_logic = ConnectFourGUI.medium_ai_logic
+        elif difficulty == "Hard":
+            ConnectFourGUI.ai_logic = ConnectFourGUI.hard_ai_logic
 
     def exit_game(self):
         self.master.destroy()
@@ -70,6 +88,42 @@ class HomePage:
 
 
 class ConnectFourGUI:
+    ai_logic = None
+
+    @staticmethod
+    def easy_ai_logic(board):
+        return random.randint(0, 6)
+
+    @staticmethod
+    def medium_ai_logic(board):
+        for col in range(7):
+            for row in range(5, -1, -1):
+                if board[row][col] == " ":
+                    return col
+        return random.randint(0, 6)
+
+    @staticmethod
+    def hard_ai_logic(board):
+        for col in range(7):
+            for row in range(5, -1, -1):
+                if board[row][col] == " ":
+                    # Check if the current move will lead to a win
+                    board[row][col] = "yellow"
+                    if ConnectFourGUI.check_winner(board, row, col, "yellow"):
+                        board[row][col] = " "
+                        return col
+                    board[row][col] = " "
+
+                    # Check if the opponent can win in the next move, and block it
+                    board[row][col] = "red"
+                    if ConnectFourGUI.check_winner(board, row, col, "red"):
+                        board[row][col] = " "
+                        return col
+                    board[row][col] = " "
+
+                    return col
+        return random.randint(0, 6)
+
     def __init__(self, master):
         self.master = master
         self.master.title("Connect Four")
@@ -137,6 +191,8 @@ class ConnectFourGUI:
                     self.message_var.set(
                         f"Player {self.current_player.capitalize()}'s Turn"
                     )
+                    if self.current_player == "yellow":
+                        self.master.after(1000, self.drop_piece_ai)
                 break
 
     def check_winner(self, row, col):
@@ -201,6 +257,26 @@ class ConnectFourGUI:
         closing_page = ClosingPage(closing_window)
         closing_window.mainloop()
 
+    def drop_piece_ai(self):
+        col = ConnectFourGUI.ai_logic(self.board)
+        for row in range(5, -1, -1):
+            if self.board[row][col] == " ":
+                x, y = col * 100 + 50, row * 100 + 50
+                self.canvas.create_oval(
+                    x - 45, y - 45, x + 45, y + 45, fill=self.current_player
+                )
+                self.board[row][col] = self.current_player
+                if self.check_winner(row, col):
+                    self.end_game(f"Player {self.current_player.capitalize()} Wins!")
+                elif self.is_board_full():
+                    self.end_game("It's a Draw!")
+                else:
+                    self.current_player = "red"
+                    self.message_var.set(
+                        f"Player {self.current_player.capitalize()}'s Turn"
+                    )
+                break
+
 
 class ClosingPage:
     def __init__(self, master):
@@ -226,10 +302,10 @@ class ClosingPage:
         )
         self.play_again_button.pack(pady=20)
 
-        self.change_difficulty_button = tk.Button(
-            master, text="Change Difficulty", command=self.change_difficulty
+        self.difficulty_button = tk.Button(
+            master, text="Change Difficulty", command=self.choose_difficulty
         )
-        self.change_difficulty_button.pack(pady=10)
+        self.difficulty_button.pack(pady=10)
 
         self.exit_button = tk.Button(master, text="Exit Game", command=self.exit_game)
         self.exit_button.pack(pady=10)
@@ -253,12 +329,17 @@ class ClosingPage:
         home_page = HomePage(root)
         root.mainloop()
 
-    def change_difficulty(self):
+    def choose_difficulty(self):
         difficulty = messagebox.askquestion(
             "Choose Difficulty", "Do you want to change the difficulty?"
         )
         if difficulty == "yes":
-            messagebox.showinfo("Difficulty", "Difficulty changed successfully!")
+            difficulty = messagebox.askquestion(
+                "Choose Difficulty",
+                "Select Difficulty:\nEasy - Play against a simple AI\nMedium - Play against a moderate AI\nHard - Play against a challenging AI",
+            )
+            if difficulty:
+                messagebox.showinfo("Difficulty", "Difficulty changed successfully!")
 
     def exit_game(self):
         self.master.destroy()
