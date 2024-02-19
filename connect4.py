@@ -9,19 +9,16 @@ class HomePage:
         self.master.title("Connect Four")
         self.master.geometry("500x400")
 
-        # Heading
         self.heading_label = tk.Label(
             master, text="Connect Four Game", font=("Helvetica", 24)
         )
         self.heading_label.pack(pady=20)
 
-        # Subheading
         self.subheading_label = tk.Label(
             master, text="Created by Ankur Halder", font=("Helvetica", 12)
         )
         self.subheading_label.pack()
 
-        # Buttons
         self.start_button = tk.Button(
             master, text="Start Game", command=self.start_game
         )
@@ -30,7 +27,6 @@ class HomePage:
         self.exit_button = tk.Button(master, text="Exit Game", command=self.exit_game)
         self.exit_button.pack(pady=10)
 
-        # Footer
         self.footer_label = tk.Label(
             master,
             text="Explore more projects like this visit ankurhalder.in",
@@ -129,7 +125,7 @@ class ConnectFourGUI:
                 break
 
     def check_winner(self, row, col):
-        # Check horizontally
+
         for c in range(col - 3, col + 1):
             if (
                 0 <= c <= 3
@@ -140,7 +136,6 @@ class ConnectFourGUI:
             ):
                 return True
 
-        # Check vertically
         for r in range(row - 3, row + 1):
             if (
                 0 <= r <= 2
@@ -151,7 +146,6 @@ class ConnectFourGUI:
             ):
                 return True
 
-        # Check diagonally (positive slope)
         for r, c in zip(range(row - 3, row + 1), range(col - 3, col + 1)):
             if (
                 0 <= r <= 2
@@ -163,7 +157,6 @@ class ConnectFourGUI:
             ):
                 return True
 
-        # Check diagonally (negative slope)
         for r, c in zip(range(row + 3, row - 1, -1), range(col - 3, col + 1)):
             if (
                 3 <= r <= 5
@@ -196,7 +189,7 @@ class ConnectFourGUI:
             self.drop_piece_ai(col)
 
     def get_ai_move(self):
-        # Check if AI can win in the next move (horizontal)
+
         for col in range(7):
             for row in range(5, -1, -1):
                 if self.board[row][col] == " ":
@@ -206,7 +199,6 @@ class ConnectFourGUI:
                         return col
                     self.board[row][col] = " "
 
-        # Check if player can win in the next move (horizontal) and block them
         for col in range(7):
             for row in range(5, -1, -1):
                 if self.board[row][col] == " ":
@@ -216,7 +208,6 @@ class ConnectFourGUI:
                         return col
                     self.board[row][col] = " "
 
-        # Check for potential winning moves for AI in the next two moves (horizontal)
         for col in range(7):
             for row in range(5, -1, -1):
                 if self.board[row][col] == " ":
@@ -232,7 +223,6 @@ class ConnectFourGUI:
                                 self.board[r][c] = " "
                     self.board[row][col] = " "
 
-        # Check if AI can win in the next move (diagonal - positive slope)
         for col in range(7):
             for row in range(5, -1, -1):
                 if self.board[row][col] == " ":
@@ -250,7 +240,6 @@ class ConnectFourGUI:
                             return col
                         self.board[row][col] = " "
 
-        # Check if AI can win in the next move (diagonal - negative slope)
         for col in range(7):
             for row in range(5, -1, -1):
                 if self.board[row][col] == " ":
@@ -268,11 +257,9 @@ class ConnectFourGUI:
                             return col
                         self.board[row][col] = " "
 
-        # Play in the center if available
         if self.board[0][3] == " ":
             return 3
 
-        # If no immediate winning move or blocking move, play randomly
         return random.randint(0, 6)
 
     def drop_piece_ai(self, col):
@@ -307,19 +294,16 @@ class ClosingPage:
         self.master.title("Connect Four")
         self.master.geometry("500x400")
 
-        # Heading
         self.heading_label = tk.Label(
             master, text="Connect Four Game", font=("Helvetica", 24)
         )
         self.heading_label.pack(pady=20)
 
-        # Subheading
         self.subheading_label = tk.Label(
             master, text="Created by Ankur Halder", font=("Helvetica", 12)
         )
         self.subheading_label.pack()
 
-        # Buttons
         self.play_again_button = tk.Button(
             master, text="Play Again", command=self.play_again
         )
@@ -328,7 +312,6 @@ class ClosingPage:
         self.exit_button = tk.Button(master, text="Exit Game", command=self.exit_game)
         self.exit_button.pack(pady=10)
 
-        # Footer
         self.footer_label = tk.Label(
             master,
             text="Explore more projects like this visit ankurhalder.in",
