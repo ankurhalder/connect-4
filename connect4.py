@@ -195,30 +195,73 @@ class ConnectFourGUI:
     def ai_move(self):
         if self.current_player == "yellow":
             col = self.get_ai_move()
-            self.drop_piece_ai(col)
+            if col is not None:
+                self.drop_piece_ai(col)
 
     def get_ai_move(self):
-        # Implement AI logic here
-        return random.randint(0, 6)
+        best_score = -float("inf")
+        best_col = None
 
-    def drop_piece_ai(self, col):
+        for col in range(7):
+            row = self.get_next_open_row(col)
+            if row is not None:
+                score = self.evaluate_move(row, col)
+                if score > best_score:
+                    best_score = score
+                    best_col = col
+
+        return best_col
+
+    def get_next_open_row(self, col):
         for row in range(5, -1, -1):
             if self.board[row][col] == " ":
-                x, y = col * 100 + 50, row * 100 + 50
-                self.canvas.create_oval(
-                    x - 45, y - 45, x + 45, y + 45, fill=self.current_player
-                )
-                self.board[row][col] = self.current_player
-                if self.check_winner(row, col):
-                    self.end_game(f"Player {self.current_player.capitalize()} Wins!")
-                elif self.is_board_full():
-                    self.end_game("It's a Draw!")
-                else:
-                    self.current_player = "red"
-                    self.message_var.set(
-                        f"Player {self.current_player.capitalize()}'s Turn"
-                    )
-                break
+                return row
+        return None
+
+    def evaluate_move(self, row, col):
+        score = 0
+
+        # Check for potential horizontal wins
+        for i in range(col - 3, col + 1):
+            if 0 <= i <= 6:
+                pieces = self.board[row][i : i + 4]
+                score += self.score_pieces(pieces)
+
+        # Check for potential vertical wins
+        for i in range(row - 3, row + 1):
+            if 0 <= i <= 5:
+                pieces = [self.board[i][col]] * 4
+                score += self.score_pieces(pieces)
+
+        # Check for potential diagonal wins
+        for i in range(-3, 4):
+            if 0 <= row + i <= 5 and 0 <= col + i <= 6:
+                pieces = [self.board[row + i][col + i]] * 4
+                score += self.score_pieces(pieces)
+            if 0 <= row - i <= 5 and 0 <= col + i <= 6:
+                pieces = [self.board[row - i][col + i]] * 4
+                score += self.score_pieces(pieces)
+
+        return score
+
+    def score_pieces(self, pieces):
+        score = 0
+        num_empty = pieces.count(" ")
+        if num_empty == 4:
+            return 0
+        if num_empty == 3:
+            score += 5  # Prioritize moves that create immediate winning opportunities
+        elif num_empty == 2:
+            score += 2  # Favor moves closer to winning
+        elif num_empty == 1:
+            score += 1  # Consider moves that block opponent's progress
+
+        if pieces.count("red") == 4:
+            score = -100  # Avoid moves that lead to opponent's win
+        elif pieces.count("yellow") == 4:
+            score += 100  # Prioritize moves that create immediate winning opportunities for AI
+
+        return score
 
 
 class ClosingPage:
